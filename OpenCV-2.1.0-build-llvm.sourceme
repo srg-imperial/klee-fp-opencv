@@ -1,1 +1,10 @@
-cmake -DCMAKE_C_COMPILER=/data/pcc03/src/llvm/llvm-gcc4.2-2.7-x86_64-linux/bin/llvm-gcc -DCMAKE_CXX_COMPILER=/data/pcc03/src/llvm/llvm-gcc4.2-2.7-x86_64-linux/bin/llvm-g++ -DCMAKE_C_FLAGS_DEBUG='-emit-llvm -g' -DCMAKE_CXX_FLAGS_DEBUG='-emit-llvm -g' -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DCMAKE_AR=/data/pcc03/src/llvm/llvm-2.7-dbg/Debug/bin/llvm-ar ../OpenCV-2.1.0
+cmake \
+ -DCMAKE_C_COMPILER=/data/pcc03/src/llvm/llvm-gcc4.2-2.7-x86_64-linux/bin/llvm-gcc \
+ -DCMAKE_CXX_COMPILER=/data/pcc03/src/llvm/llvm-gcc4.2-2.7-x86_64-linux/bin/llvm-g++ \
+ -DCMAKE_C_FLAGS_DEBUG='-emit-llvm -g' \
+ -DCMAKE_CXX_FLAGS_DEBUG='-emit-llvm -g' \
+ -DCMAKE_BUILD_TYPE=Debug \
+ -DBUILD_SHARED_LIBS=OFF \
+ -DCMAKE_AR=/data/pcc03/src/llvm/llvm-2.7-dbg/Debug/bin/llvm-ar \
+ -DCMAKE_RANLIB=/data/pcc03/src/llvm/llvm-2.7-dbg/Debug/bin/llvm-ranlib \
+ ../OpenCV-2.1.0
