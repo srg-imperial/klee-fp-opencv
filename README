@@ -1,0 +1,10 @@
+Building OpenCV LLVM Bitcode Library and these test benchmarks
+==============================================================
+
+1. Extract OpenCV 2.1.0
+2. Apply the patch OpenCV-2.1.0-disable-cpuid.patch 
+3. Create and cd to the build directory (sibling of OpenCV-2.1.0)
+4. Edit the paths in OpenCV-2.1.0-build-llvm.sourceme and source it
+5. make (it will build the libraries but errors out when building an executable, we don't care about the executable)
+6. In this directory, edit paths in Makefile and make
+7. klee -libc=klee eigenval.exe.bc

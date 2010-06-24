@@ -1,0 +1,25 @@
+diff -urN OpenCV-2.1.0.orig/src/cxcore/cxsystem.cpp OpenCV-2.1.0/src/cxcore/cxsystem.cpp
+--- OpenCV-2.1.0.orig/src/cxcore/cxsystem.cpp	2010-04-06 02:24:44.000000000 +0100
++++ OpenCV-2.1.0/src/cxcore/cxsystem.cpp	2010-06-22 18:57:36.027199654 +0100
+@@ -101,6 +101,7 @@
+     static HWFeatures initialize()
+     {
+         HWFeatures f;
++#if 0
+         int cpuid_data[4]={0,0,0,0};
+         
+     #if defined _MSC_VER && (defined _M_IX86 || defined _M_X64)
+@@ -141,7 +142,12 @@
+             f.have[CV_CPU_SSE4_2] = (cpuid_data[2] & (1<<20)) != 0;
+             f.have[CV_CPU_AVX] = (cpuid_data[2] & (1<<28)) != 0;
+         }
+-        
++#else
++        f.have[CV_CPU_MMX] = true;   
++        f.have[CV_CPU_SSE] = true;   
++        f.have[CV_CPU_SSE2] = true;   
++        f.have[CV_CPU_SSE3] = true;   
++#endif
+         return f;
+     }
+     
