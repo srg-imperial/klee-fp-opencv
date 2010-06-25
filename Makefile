@@ -1,6 +1,8 @@
 include Makefile.config
 
-all: eigenval.exe harris.exe
+BENCHMARKS = eigenval.exe harris.exe transff.exe
+
+all: $(BENCHMARKS)
 
 %.bc: %.cpp
 	$(LLVMGCC_PATH)/bin/llvm-g++ -I$(OPENCV_PATH)/include/opencv -I$(KLEE_PATH)/include/klee -I$(OPENCV_BUILD_PATH) -c -emit-llvm $< -o $@
@@ -25,4 +27,4 @@ opencv: OpenCV-2.1.0.tar.bz2
 	-make -C$(OPENCV_BUILD_PATH)
 	
 clean:
-	rm -f eigenval.exe harris.exe *.bc
+	rm -f $(BENCHMARKS) *.bc
