@@ -1,5 +1,6 @@
 #include "cv.h"
 #include <klee.h>
+#include <assert.h>
 
 int main(void) {
 	IplImage *img1 = cvCreateImage(cvSize(4, 4), IPL_DEPTH_32F, 1);
@@ -13,5 +14,6 @@ int main(void) {
 	cvCornerMinEigenVal(img1, img3, 5);
 	klee_print_expr("img2->imageData[0]", ((float *)img2->imageData)[0]);
 	klee_print_expr("img3->imageData[0]", ((float *)img3->imageData)[0]);
+	assert(((float *)img2->imageData)[0] == ((float *)img3->imageData)[0]);
 }
 
