@@ -1,0 +1,18 @@
+# Path to build-style directory (e.g. Release or Debug) under LLVM build directory
+LLVM_BUILD_PATH=
+
+# Path to LLVM GCC prefix (not including bin/llvm-gcc)
+LLVMGCC_PATH=
+
+# Path to KLEE source directory 
+KLEE_PATH=
+
+# N.B. if you are using "make opencv", OPENCV_PATH and OPENCV_BUILD_PATH
+# indicate paths where OpenCV will be extracted and built, not paths
+# for an existing OpenCV
+
+# Path to OpenCV source directory
+OPENCV_PATH=
+
+# Path to OpenCV build directory
+OPENCV_BUILD_PATH=

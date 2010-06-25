@@ -1,8 +1,4 @@
-LLVM_BUILD_PATH = /homes/pcc03/data/src/llvm/llvm-2.7-dbg/Debug
-LLVMGCC_PATH = /homes/pcc03/data/src/llvm/llvm-gcc4.2-2.7-x86_64-linux
-KLEE_PATH = /homes/pcc03/data/src/llvm/klee
-OPENCV_PATH = /data/pcc03/src/OpenCV-2.1.0
-OPENCV_BUILD_PATH = /data/pcc03/src/OpenCV-2.1.0-build-llvm
+include Makefile.config
 
 all: eigenval.exe harris.exe
 
@@ -12,5 +8,21 @@ all: eigenval.exe harris.exe
 %.exe: %.bc
 	$(LLVM_BUILD_PATH)/bin/llvm-ld -disable-opt $< $(OPENCV_BUILD_PATH)/lib/libcv.a $(OPENCV_BUILD_PATH)/lib/libcxcore.a -o $@
 
+OpenCV-2.1.0.tar.bz2:
+	wget http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.1/OpenCV-2.1.0.tar.bz2
+
+opencv: OpenCV-2.1.0.tar.bz2
+	rm -rf $(OPENCV_PATH) $(OPENCV_BUILD_PATH)
+	cd $(shell dirname $(OPENCV_PATH)) && \
+	  tar xjf $(shell pwd)/OpenCV-2.1.0.tar.bz2 && \
+	  mv OpenCV-2.1.0 $(shell basename $(OPENCV_PATH))
+	cd $(OPENCV_PATH) && \
+	  for patch in $(shell pwd)/OpenCV-2.1.0-*.patch ; do \
+	    patch -p1 < $$patch ; \
+	  done
+	mkdir -p $(OPENCV_BUILD_PATH)
+	cd $(OPENCV_BUILD_PATH) && $(shell pwd)/cmake-opencv $(OPENCV_PATH)
+	-make -C$(OPENCV_BUILD_PATH)
+	
 clean:
 	rm -f eigenval.exe harris.exe *.bc

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. $(dirname "$0")/Makefile.config
+
+cmake \
+ -DCMAKE_C_COMPILER=$LLVMGCC_PATH/bin/llvm-gcc \
+ -DCMAKE_CXX_COMPILER=$LLVMGCC_PATH/bin/llvm-g++ \
+ -DCMAKE_C_FLAGS_DEBUG='-emit-llvm -g' \
+ -DCMAKE_CXX_FLAGS_DEBUG='-emit-llvm -g' \
+ -DCMAKE_BUILD_TYPE=Debug \
+ -DBUILD_SHARED_LIBS=OFF \
+ -DCMAKE_AR=$LLVM_BUILD_PATH/bin/llvm-ar \
+ -DCMAKE_RANLIB=$LLVM_BUILD_PATH/bin/llvm-ranlib \
+ "$@"

@@ -1,10 +1,15 @@
 Building OpenCV LLVM Bitcode Library and these test benchmarks
 ==============================================================
 
-1. Extract OpenCV 2.1.0
-2. Apply the patch OpenCV-2.1.0-*.patch 
-3. Create and cd to the build directory (sibling of OpenCV-2.1.0)
-4. Edit the paths in OpenCV-2.1.0-build-llvm.sourceme and source it
-5. make (it will build the libraries but errors out when building an executable, we don't care about the executable)
-6. In this directory, edit paths in Makefile and make
-7. klee -libc=klee eigenval.exe.bc
+1. Copy the Makefile.config.sample file to a new file Makefile.config
+   and insert paths for your machine.
+   N.B. OPENCV_PATH and OPENCV_BUILD_PATH indicate paths where OpenCV
+   will be extracted and built, not paths for an existing OpenCV
+
+2. Type "make opencv" to build OpenCV to the provided build path
+   (it will build the libraries but errors out when building an
+   executable, we don't care about the executable)
+
+3. Type "make" to build the benchmarks
+
+4. To run a benchmark: klee -libc=klee eigenval.exe.bc
