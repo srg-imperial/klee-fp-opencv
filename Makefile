@@ -15,7 +15,9 @@ opencv: OpenCV-2.1.0.tar.bz2
 	rm -rf $(OPENCV_PATH) $(OPENCV_BUILD_PATH)
 	cd $(shell dirname $(OPENCV_PATH)) && \
 	  tar xjf $(shell pwd)/OpenCV-2.1.0.tar.bz2 && \
-	  mv OpenCV-2.1.0 $(shell basename $(OPENCV_PATH))
+	  if \! test -e $(OPENCV_PATH) ; then \
+	    mv OpenCV-2.1.0 $(shell basename $(OPENCV_PATH)) ; \
+	  fi
 	cd $(OPENCV_PATH) && \
 	  for patch in $(shell pwd)/OpenCV-2.1.0-*.patch ; do \
 	    patch -p1 < $$patch ; \
