@@ -1,6 +1,5 @@
-diff -urN OpenCV-2.1.0.orig/src/cv/cvcorner.cpp OpenCV-2.1.0/src/cv/cvcorner.cpp
 --- OpenCV-2.1.0.orig/src/cv/cvcorner.cpp	2010-04-06 02:24:43.000000000 +0100
-+++ OpenCV-2.1.0/src/cv/cvcorner.cpp	2010-06-25 12:39:35.000000000 +0100
++++ OpenCV-2.1.0/src/cv/cvcorner.cpp	2010-06-25 15:17:45.296577587 +0100
 @@ -95,9 +95,9 @@
      #endif
          for( ; j < size.width; j++ )
@@ -14,3 +13,18 @@ diff -urN OpenCV-2.1.0.orig/src/cv/cvcorner.cpp OpenCV-2.1.0/src/cv/cvcorner.cpp
              dst[j] = (float)((a + c) - std::sqrt((a - c)*(a - c) + b*b));
          }
      }
+@@ -153,10 +153,10 @@
+ 
+         for( ; j < size.width; j++ )
+         {
+-            double a = cov[j*3];
+-            double b = cov[j*3+1];
+-            double c = cov[j*3+2];
+-            dst[j] = (float)(a*c - b*b - k*(a + c)*(a + c));
++            float a = cov[j*3];
++            float b = cov[j*3+1];
++            float c = cov[j*3+2];
++            dst[j] = (float)(a*c - b*b - ((float)k)*(a + c)*(a + c));
+         }
+     }
+ }
