@@ -1,6 +1,6 @@
 include Makefile.config
 
-BENCHMARKS = eigenval.exe harris.exe transff.exe
+BENCHMARKS = eigenval.exe harris.exe transff.exe transsf.exe
 
 all: $(BENCHMARKS)
 
