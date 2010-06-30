@@ -3,8 +3,8 @@
 #include <assert.h>
 
 int main(void) {
-	unsigned char mat1data[16];
-	unsigned char mat2data[16];
+	unsigned char mat1data[256];
+	unsigned char mat2data[256];
 	CvMat mat1, mat2;
 	CvMat *mat3v = cvCreateMat(16, 16, CV_16SC1);
 	CvMat *mat3s = cvCreateMat(16, 16, CV_16SC1);
