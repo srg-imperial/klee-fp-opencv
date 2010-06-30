@@ -1,5 +1,7 @@
 #include "cv.h"
+#ifndef __CONCRETE
 #include <klee.h>
+#endif
 #include <assert.h>
 
 int main(void) {

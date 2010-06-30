@@ -16,3 +16,6 @@ OPENCV_PATH=
 
 # Path to OpenCV build directory
 OPENCV_BUILD_PATH=
+
+# Path to OpenCV standard build directory (needed only for "make conc")
+OPENCV_CONC_BUILD_PATH=
