@@ -11,7 +11,7 @@ conc: $(CONC_BENCHMARKS)
 	$(LLVMGCC_PATH)/bin/llvm-g++ $(CXXFLAGS) -I$(OPENCV_PATH)/include/opencv -I$(KLEE_PATH)/include/klee -I$(OPENCV_BUILD_PATH) -c -emit-llvm $< -o $@
 
 %.o: %.cpp
-	g++ $(CXXFLAGS) -D__CONCRETE -I$(OPENCV_PATH)/include/opencv -I$(OPENCV_CONC_BUILD_PATH) -c $< -o $@
+	g++ $(CXXFLAGS) -ggdb3 -D__CONCRETE -I$(OPENCV_PATH)/include/opencv -I$(OPENCV_CONC_BUILD_PATH) -c $< -o $@
 
 %.exe: %.bc
 	$(LLVM_BUILD_PATH)/bin/llvm-ld -disable-opt $< $(OPENCV_BUILD_PATH)/lib/libcv.a $(OPENCV_BUILD_PATH)/lib/libcxcore.a -o $@
