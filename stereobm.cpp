@@ -3,6 +3,7 @@
 #include <klee.h>
 #endif
 #include <assert.h>
+#include <stdio.h>
 
 int main(void) {
 	unsigned char mat1data[4096];
