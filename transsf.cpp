@@ -20,6 +20,7 @@ int main(void) {
 	cvUseOptimized(false);
 	cvTransform(&mat1, mat3s, &mat2, NULL);
 
+	klee_dump_constraints();
 	for (int i = 0; i < 1; i++) {
 		char buf[256];
 		sprintf(buf, "mat3s->data.s[%d]", i);
