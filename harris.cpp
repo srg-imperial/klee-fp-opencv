@@ -3,6 +3,7 @@
 #include <klee.h>
 #endif
 #include <assert.h>
+#include <stdio.h>
 
 int main(void) {
 	IplImage *img1 = cvCreateImage(cvSize(4, 4), IPL_DEPTH_32F, 1);

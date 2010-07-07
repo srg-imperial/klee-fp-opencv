@@ -42,6 +42,7 @@ int main(void) {
 	  else printf(" ...NO\n");
 	}
 #else
+	klee_dump_constraints();
 	for (int i = 0; i < 1; i++) {
 		char buf[256];
 		sprintf(buf, "mat3s->data.s[%d]", i);
