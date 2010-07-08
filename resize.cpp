@@ -61,8 +61,8 @@ int main(int argc, char **argv) {
 		klee_print_expr(buf, mat2s->data.FLD[i]); \
 		sprintf(buf, "mat2v->data." #FLD "[%d]", i); \
 		klee_print_expr(buf, mat2v->data.FLD[i]); \
-	} \
-	assert(mat2s->data.FLD[0] == mat2v->data.FLD[0]);
+		assert(mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
+	}
 
 	switch (format) {
 	case CV_8UC1:
