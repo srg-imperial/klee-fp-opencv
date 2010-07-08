@@ -5,17 +5,20 @@
 #endif
 #include <assert.h>
 
+#define N1 4
+
+
 int main(void) {
-	unsigned short mat1data[48];
+	unsigned short mat1data[N1*N1*3];
 	float mat2data[12];
 	CvMat mat1, mat2;
-	CvMat *mat3v = cvCreateMat(4, 4, CV_16UC3);
-	CvMat *mat3s = cvCreateMat(4, 4, CV_16UC3);
+	CvMat *mat3v = cvCreateMat(N1, N1, CV_16UC3);
+	CvMat *mat3s = cvCreateMat(N1, N1, CV_16UC3);
 
 #ifdef __CONCRETE
 	srandom(127);
 	srand48(127);
-	for (int i=0; i < 48; i++)
+	for (int i=0; i < N1*N1*3; i++)
 	  mat1data[i] = random();
 
 	for (int i=0; i < 12; i++)
@@ -25,8 +28,8 @@ int main(void) {
 	klee_make_symbolic(mat2data, sizeof(mat2data), "mat2data");
 #endif
 
-	mat1 = cvMat(4, 4, CV_16UC3, mat1data);
-	mat2 = cvMat(3, 4, CV_32FC1, mat2data);
+	mat1 = cvMat(N1, N1, CV_16UC3, mat1data);
+	mat2 = cvMat(3, N1, CV_32FC1, mat2data);
 
 	cvUseOptimized(true);
 	cvTransform(&mat1, mat3v, &mat2, NULL);
@@ -34,7 +37,7 @@ int main(void) {
 	cvTransform(&mat1, mat3s, &mat2, NULL);
 
 #ifdef __CONCRETE
-	for (int i = 0; i < 48; i++) {
+	for (int i = 0; i < N1*N1*3; i++) {
 	  printf("%10d vs. %10d", mat3s->data.s[i], mat3v->data.s[i]);
 		 
 	  if (mat3s->data.s[i] == mat3v->data.s[i])
@@ -42,15 +45,19 @@ int main(void) {
 	  else printf(" ...NO\n");
 	}
 #else
-	klee_dump_constraints();
-	for (int i = 0; i < 1; i++) {
-		char buf[256];
+	//klee_dump_constraints();
+	for (int i = 0; i < N1*N1*3; i++) {
+	  printf("Iteration %d\n", i);
+	  if (mat3s->data.s[i] != mat3v->data.s[i]) {
+	        char buf[256];
 		sprintf(buf, "mat3s->data.s[%d]", i);
 		klee_print_expr(buf, mat3s->data.s[i]);
 		sprintf(buf, "mat3v->data.s[%d]", i);
 		klee_print_expr(buf, mat3v->data.s[i]);
+		assert(mat3s->data.s[i] == mat3v->data.s[i]);
+	  }
 	}
-	assert(mat3s->data.s[0] == mat3v->data.s[0]);
+	
 #endif
 }
 
