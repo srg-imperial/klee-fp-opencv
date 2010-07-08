@@ -64,20 +64,18 @@ int main(int argc, char **argv) {
 	} \
 	assert(mat2s->data.FLD[0] == mat2v->data.FLD[0]);
 
-	for (int i = 0; i < mat2width*mat2height; i++) {
-		switch (format) {
-		case CV_8UC1:
-			PRINT_AND_CHECK(ptr)
-			break;
-		case CV_16UC1:
-		case CV_16SC1:
-			PRINT_AND_CHECK(s)
-			break;
-		case CV_32FC1:
-			PRINT_AND_CHECK(fl)
-			break;
-		default: puts("Unsupported format"); exit(1);
-		}
+	switch (format) {
+	case CV_8UC1:
+		PRINT_AND_CHECK(ptr)
+		break;
+	case CV_16UC1:
+	case CV_16SC1:
+		PRINT_AND_CHECK(s)
+		break;
+	case CV_32FC1:
+		PRINT_AND_CHECK(fl)
+		break;
+	default: puts("Unsupported format"); exit(1);
 	}
 }
 
