@@ -1,7 +1,10 @@
 #include "cv.h"
+#ifndef __CONCRETE
 #include <klee.h>
+#endif
 #include <assert.h>
 #include <unistd.h>
+#include <stdio.h>
 
 int main(int argc, char **argv) {
 	void *mat1data;
@@ -45,7 +48,11 @@ int main(int argc, char **argv) {
 
 	mat1size = mat1width * mat1height * (1 << (CV_MAT_DEPTH(format) >> 1));
 	mat1data = malloc(mat1size);
+#ifdef __CONCRETE
+	memcpy(mat1data, "\x7f\x7f\xba\x00\xb8\x9b/\x00\xde\xa4\x11\x00UH\xfe\x00", mat1size);
+#else
 	klee_make_symbolic(mat1data, mat1size, "mat1data");
+#endif
 
 	mat1 = cvMat(mat1width, mat1height, format, mat1data);
 
@@ -54,30 +61,39 @@ int main(int argc, char **argv) {
 	cvUseOptimized(false);
 	cvResize(&mat1, mat2s, algo);
 
-#define PRINT_AND_CHECK(FLD) \
+#ifdef __CONCRETE
+#define PRINT_AND_CHECK(FLD, S) \
+	for (int i = 0; i < mat2width*mat2height; i++) { \
+		printf("mat2s->data." #FLD "[%d] = " S "\n", i, mat2s->data.FLD[i]); \
+		printf("mat2v->data." #FLD "[%d] = " S "\n", i, mat2v->data.FLD[i]); \
+		if (mat2s->data.FLD[i] != mat2v->data.FLD[i]) { \
+			puts("differ!"); \
+		} \
+	}
+#else
+#define PRINT_AND_CHECK(FLD, S) \
 	for (int i = 0; i < mat2width*mat2height; i++) { \
 		char buf[256]; \
 		sprintf(buf, "mat2s->data." #FLD "[%d]", i); \
 		klee_print_expr(buf, mat2s->data.FLD[i]); \
 		sprintf(buf, "mat2v->data." #FLD "[%d]", i); \
 		klee_print_expr(buf, mat2v->data.FLD[i]); \
-	} \
-	assert(mat2s->data.FLD[0] == mat2v->data.FLD[0]);
+		assert(mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
+	}
+#endif
 
-	for (int i = 0; i < mat2width*mat2height; i++) {
-		switch (format) {
-		case CV_8UC1:
-			PRINT_AND_CHECK(ptr)
-			break;
-		case CV_16UC1:
-		case CV_16SC1:
-			PRINT_AND_CHECK(s)
-			break;
-		case CV_32FC1:
-			PRINT_AND_CHECK(fl)
-			break;
-		default: puts("Unsupported format"); exit(1);
-		}
+	switch (format) {
+	case CV_8UC1:
+		PRINT_AND_CHECK(ptr, "%d")
+		break;
+	case CV_16UC1:
+	case CV_16SC1:
+		PRINT_AND_CHECK(s, "%d")
+		break;
+	case CV_32FC1:
+		PRINT_AND_CHECK(fl, "%f")
+		break;
+	default: puts("Unsupported format"); exit(1);
 	}
 }
 
