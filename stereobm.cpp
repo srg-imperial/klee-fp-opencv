@@ -5,7 +5,9 @@
 #include <assert.h>
 #include <stdio.h>
 
-int main(void) {
+#include "get_seed.cpp"
+
+int main(int argc, char** argv) {
 	unsigned char mat1data[4096];
 	unsigned char mat2data[4096];
 	CvMat mat1, mat2;
@@ -14,9 +16,12 @@ int main(void) {
 	CvStereoBMState *state;
 
 #ifdef __CONCRETE
+	int seed = get_seed(argc, argv);
+	srandom(seed);
+	
 	for (int i = 0; i < 4096; i++) {
-		mat1data[i] = i*51;
-		mat2data[i] = i*72;
+	  mat1data[i] = random() % (8* sizeof(mat1data[0]));;
+	  mat2data[i] = random() % (8* sizeof(mat2data[0]));;
 	}
 #else
 	klee_make_symbolic(mat1data, sizeof(mat1data), "mat1data");
@@ -42,10 +47,21 @@ int main(void) {
 	cvReleaseStereoBMState(&state);
 
 #ifdef __CONCRETE
+	int diffs = 0;
 	for (int i = 0; i < 1024; i++) {
-		printf("mat3s->data.s[%d] = %d\n", i, mat3s->data.s[i]);
-		printf("mat3v->data.s[%d] = %d\n", i, mat3v->data.s[i]);
+	  printf("Elem %d: %d vs %d", i, 
+		 mat3s->data.s[i], mat3v->data.s[i]);
+
+	  if (mat3s->data.s[i] != mat3v->data.s[i]) {
+	    printf("NO!!!");
+	    diffs = 1;
+	  }
+	  printf("\n");
 	}
+	printf("\n");
+	if (diffs)
+	  printf("Mismatches FOUND!\n");
+	else printf("No mismatches found.\n");
 #else
 	for (int i = 0; i < 1024; i++) {
 		char buf[256];
