@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char **argv) {
 	void *mat1data;
@@ -16,9 +17,10 @@ int main(int argc, char **argv) {
 	int mat1width = 4, mat2width = 8;
 	int mat1height = 4, mat2height = 8;
 	int format = CV_8UC1;
+	int do_random = 0;
 
 	int ch;
-	while ((ch = getopt(argc, argv, "lcLf:w:h:W:H:")) != -1) {
+	while ((ch = getopt(argc, argv, "lcLf:w:h:W:H:r:")) != -1) {
 		switch (ch) {
 		case 'l': algo = CV_INTER_LINEAR; break;
 		case 'c': algo = CV_INTER_CUBIC; break;
@@ -40,6 +42,9 @@ int main(int argc, char **argv) {
 		case 'h': mat1height = atoi(optarg); break;
 		case 'W': mat2width = atoi(optarg); break;
 		case 'H': mat2height = atoi(optarg); break;
+#ifdef __CONCRETE
+		case 'r': do_random = 1; srandom(atoi(optarg)); break;
+#endif
 		}
 	}
 
@@ -49,7 +54,14 @@ int main(int argc, char **argv) {
 	mat1size = mat1width * mat1height * (1 << (CV_MAT_DEPTH(format) >> 1));
 	mat1data = malloc(mat1size);
 #ifdef __CONCRETE
-	memcpy(mat1data, "\x7f\x7f\xba\x00\xb8\x9b/\x00\xde\xa4\x11\x00UH\xfe\x00", mat1size);
+	if (do_random) {
+		char *mat1cdata = (char *) mat1data;
+		int left = mat1size;
+		while (left--)
+			*(mat1cdata++) = random();
+	} else {
+		memcpy(mat1data, "\x7f\x7f\xba\x00\xb8\x9b/\x00\xde\xa4\x11\x00UH\xfe\x00", mat1size);
+	}
 #else
 	klee_make_symbolic(mat1data, mat1size, "mat1data");
 #endif
