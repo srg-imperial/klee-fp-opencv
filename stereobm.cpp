@@ -20,8 +20,8 @@ int main(int argc, char** argv) {
 	srandom(seed);
 	
 	for (int i = 0; i < 4096; i++) {
-	  mat1data[i] = random() % (8* sizeof(mat1data[0]));;
-	  mat2data[i] = random() % (8* sizeof(mat2data[0]));;
+	  mat1data[i] = random();
+	  mat2data[i] = random();
 	}
 #else
 	klee_make_symbolic(mat1data, sizeof(mat1data), "mat1data");
