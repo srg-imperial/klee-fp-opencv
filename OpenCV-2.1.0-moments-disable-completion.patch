@@ -1,0 +1,12 @@
+--- OpenCV-2.1.0.orig/src/cv/cvmoments.cpp	2010-04-06 02:24:43.000000000 +0100
++++ OpenCV-2.1.0/src/cv/cvmoments.cpp	2010-07-09 18:46:03.627199578 +0100
+@@ -460,7 +460,9 @@
+         }
+     }
+ 
++#if 0
+ 	icvCompleteMomentState( moments );
++#endif
+ }
+ 
+ 
