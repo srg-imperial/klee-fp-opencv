@@ -17,7 +17,7 @@ conc: $(CONC_BENCHMARKS)
 	$(LLVM_BUILD_PATH)/bin/llvm-ld -disable-opt $< $(OPENCV_BUILD_PATH)/lib/libcv.a $(OPENCV_BUILD_PATH)/lib/libcxcore.a -o $@
 
 %.conc: %.o
-	g++ $< -L$(OPENCV_CONC_BUILD_PATH)/lib -lcv -lcxcore -o $@
+	g++ $< -L$(OPENCV_CONC_BUILD_PATH)/lib -Wl,-rpath,$(OPENCV_CONC_BUILD_PATH)/lib -lcv -lcxcore -o $@
 
 OpenCV-2.1.0.tar.bz2:
 	wget http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.1/OpenCV-2.1.0.tar.bz2
