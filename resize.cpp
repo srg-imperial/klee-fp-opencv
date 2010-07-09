@@ -48,8 +48,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	mat2v = cvCreateMat(mat2width, mat2height, format);
-	mat2s = cvCreateMat(mat2width, mat2height, format);
+	mat2v = cvCreateMat(mat2height, mat2width, format);
+	mat2s = cvCreateMat(mat2height, mat2width, format);
 
 	mat1size = mat1width * mat1height * (1 << (CV_MAT_DEPTH(format) >> 1));
 	mat1data = malloc(mat1size);
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 	klee_make_symbolic(mat1data, mat1size, "mat1data");
 #endif
 
-	mat1 = cvMat(mat1width, mat1height, format, mat1data);
+	mat1 = cvMat(mat1height, mat1width, format, mat1data);
 
 	cvUseOptimized(true);
 	cvResize(&mat1, mat2v, algo);

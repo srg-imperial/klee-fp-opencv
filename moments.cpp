@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 	klee_make_symbolic(mat1data, mat1size, "mat1data");
 #endif
 
-	mat1 = cvMat(mat1width, mat1height, format, mat1data);
+	mat1 = cvMat(mat1height, mat1width, format, mat1data);
 
 	cvUseOptimized(true);
 	cvMoments(&mat1, &momv, binary);
