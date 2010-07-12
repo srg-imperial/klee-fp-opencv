@@ -10,6 +10,9 @@
 #include "get_seed.cpp"
 
 int main(int argc, char** argv) {
+#ifndef __CONCRETE
+	unsigned sse_count_v, sse_count_s;
+#endif
 	unsigned char mat1data[N];
 	int mat2data[N];
 	CvMat mat1, mat2;
@@ -32,9 +35,23 @@ int main(int argc, char** argv) {
 	mat2 = cvMat(4, 4, CV_32SC1, mat2data);
 
 	cvUseOptimized(true);
+#ifndef __CONCRETE
+	klee_sse_count = 0;
+#endif
 	cvFilter2D(&mat1, mat3v, &mat2, cvPoint(-1, -1));
+#ifndef __CONCRETE
+	sse_count_v = klee_sse_count;
+#endif
 	cvUseOptimized(false);
+#ifndef __CONCRETE
+        klee_sse_count = 0;
+#endif
 	cvFilter2D(&mat1, mat3s, &mat2, cvPoint(-1, -1));
+#ifndef __CONCRETE
+	sse_count_s = klee_sse_count;
+	printf("SSE COUNT: V=%d S=%d\n", sse_count_v, sse_count_s);
+	assert(sse_count_v > sse_count_s);
+#endif
 
 #ifdef __CONCRETE
 	for (int i = 0; i < N; i++) {

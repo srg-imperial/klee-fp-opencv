@@ -8,6 +8,9 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
+#ifndef __CONCRETE
+	unsigned sse_count_v, sse_count_s;
+#endif
 	void *mat1data;
 	size_t mat1size;
 	CvMat mat1;
@@ -69,9 +72,23 @@ int main(int argc, char **argv) {
 	mat1 = cvMat(mat1height, mat1width, format, mat1data);
 
 	cvUseOptimized(true);
+#ifndef __CONCRETE
+	klee_sse_count = 0;
+#endif
 	cvResize(&mat1, mat2v, algo);
+#ifndef __CONCRETE
+	sse_count_v = klee_sse_count;
+#endif
 	cvUseOptimized(false);
+#ifndef __CONCRETE
+        klee_sse_count = 0;
+#endif
 	cvResize(&mat1, mat2s, algo);
+#ifndef __CONCRETE
+	sse_count_s = klee_sse_count;
+	printf("SSE COUNT: V=%d S=%d\n", sse_count_v, sse_count_s);
+	assert(sse_count_v > sse_count_s);
+#endif
 
 #ifdef __CONCRETE
 #define PRINT_AND_CHECK(FLD, S) \
