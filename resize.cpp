@@ -21,6 +21,7 @@ int main(int argc, char **argv) {
 	int mat1height = 4, mat2height = 8;
 	int format = CV_8UC1;
 	int do_random = 0;
+	int diffs = 0;
 
 	int ch;
 	while ((ch = getopt(argc, argv, "lcLf:w:h:W:H:r:")) != -1) {
@@ -92,13 +93,19 @@ int main(int argc, char **argv) {
 
 #ifdef __CONCRETE
 #define PRINT_AND_CHECK(FLD, S) \
+	diffs = 0; \
 	for (int i = 0; i < mat2width*mat2height; i++) { \
-		printf("mat2s->data." #FLD "[%d] = " S "\n", i, mat2s->data.FLD[i]); \
-		printf("mat2v->data." #FLD "[%d] = " S "\n", i, mat2v->data.FLD[i]); \
-		if (mat2s->data.FLD[i] != mat2v->data.FLD[i]) { \
-			puts("differ!"); \
-		} \
-	}
+		printf(#FLD "[%d]: " S " vs." S, i, mat2s->data.FLD[i], mat2v->data.FLD[i]); \
+		if (mat2s->data.FLD[i] != mat2v->data.FLD[i]) {	\
+			printf(" ...NO\n"); \
+                        diffs++; \
+                } \
+		else printf("\n"); \
+	} \
+	printf("--\n"); \
+	if (diffs) \
+	  printf("%d mismatches FOUND!\n", diffs); \
+	else printf("No mismatches found.\n");
 #else
 #define PRINT_AND_CHECK(FLD, S) \
 	for (int i = 0; i < mat2width*mat2height; i++) { \
@@ -111,11 +118,11 @@ int main(int argc, char **argv) {
 
 	switch (format) {
 	case CV_8UC1:
-		PRINT_AND_CHECK(ptr, "%d")
+		PRINT_AND_CHECK(ptr, "%4d")
 		break;
 	case CV_16UC1:
 	case CV_16SC1:
-		PRINT_AND_CHECK(s, "%d")
+		PRINT_AND_CHECK(s, "%4d")
 		break;
 	case CV_32FC1:
 		PRINT_AND_CHECK(fl, "%f")

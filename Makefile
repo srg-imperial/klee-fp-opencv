@@ -1,7 +1,7 @@
 include Makefile.config
 
 BENCHMARKS = eigenval.exe harris.exe transff.exe transsf.exe stereobm.exe filter.exe resize.exe moments.exe
-CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc
+CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.conc
 
 all: $(BENCHMARKS)
 
