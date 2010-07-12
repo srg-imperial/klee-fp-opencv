@@ -5,7 +5,9 @@
 #include <assert.h>
 #include <stdio.h>
 
-int main(void) {
+#include "get_seed.cpp"
+
+int main(int argc, char** argv) {
 	IplImage *img1 = cvCreateImage(cvSize(4, 4), IPL_DEPTH_32F, 1);
 	IplImage *img2 = cvCreateImage(cvSize(4, 4), IPL_DEPTH_32F, 1);
 	IplImage *img3 = cvCreateImage(cvSize(4, 4), IPL_DEPTH_32F, 1);
@@ -13,7 +15,8 @@ int main(void) {
 	float *data = (float*) malloc(img1->widthStep*img1->height);
 
 #ifdef __CONCRETE
-	srand48(123);
+	int seed = get_seed(argc, argv);
+	srand48(seed);
 	for (int i=0; i < 16; i++)
 	  data[i] = drand48();
 #else
@@ -26,13 +29,21 @@ int main(void) {
 	cvCornerHarris(img1, img3, 5);
 	
 #ifdef __CONCRETE
+	int diffs = 0;
 	for (int i=0; i< 16; i++) {
 	  printf("%.20f vs. %.20f", (((float*)img2->imageData))[i], 
 		 (((float*)img3->imageData))[i]);
 	  if ((((float*)img2->imageData))[i] == (((float*)img3->imageData))[i])
 	    printf("\n");
-	  else printf(" ...NO\n");
+	  else {
+	    printf(" ...NO\n");
+	    diffs++;
+	  }
 	}
+	printf("--\n");
+	if (diffs)
+	  printf("%d mismatches FOUND!\n", diffs);
+	else printf("No mismatches found.\n");
 #else
 	klee_print_expr("img2->imageData[0]", ((float *)img2->imageData)[0]);
 	klee_print_expr("img3->imageData[0]", ((float *)img3->imageData)[0]);
