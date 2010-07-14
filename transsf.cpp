@@ -4,6 +4,7 @@
 #include <klee.h>
 #endif
 #include <assert.h>
+#include <stdio.h>
 
 #define N 4
 

@@ -4,6 +4,7 @@
 #endif
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define N 16
 
