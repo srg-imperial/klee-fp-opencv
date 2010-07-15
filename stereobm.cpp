@@ -7,6 +7,9 @@
 #include <unistd.h>
 
 int main(int argc, char** argv) {
+#ifndef __CONCRETE
+	unsigned sse_count_v, sse_count_s;
+#endif
 	unsigned char *mat1data;
 	unsigned char *mat2data;
 	CvMat mat1, mat2;
@@ -51,7 +54,13 @@ int main(int argc, char** argv) {
 	state = cvCreateStereoBMState(0, 0);
 	state->roi1 = cvRect(0, 0, matwidth-1, matheight-1);
 	state->roi2 = cvRect(0, 0, matwidth-1, matheight-1);
+#ifndef __CONCRETE
+	sse_count_v = klee_sse_count;
+#endif
 	state->numberOfDisparities = disp;
+#ifndef __CONCRETE
+	klee_sse_count = 0;
+#endif
 	cvFindStereoCorrespondenceBM(&mat1, &mat2, mat3v, state);
 	cvReleaseStereoBMState(&state);
 	cvUseOptimized(false);
@@ -59,7 +68,15 @@ int main(int argc, char** argv) {
 	state->roi1 = cvRect(0, 0, matwidth-1, matheight-1);
 	state->roi2 = cvRect(0, 0, matwidth-1, matheight-1);
 	state->numberOfDisparities = disp;
+#ifndef __CONCRETE
+        klee_sse_count = 0;
+#endif
 	cvFindStereoCorrespondenceBM(&mat1, &mat2, mat3s, state);
+#ifndef __CONCRETE
+	sse_count_s = klee_sse_count;
+	printf("SSE COUNT: V=%d S=%d\n", sse_count_v, sse_count_s);
+	assert(sse_count_v > sse_count_s);
+#endif
 	cvReleaseStereoBMState(&state);
 
 #ifdef __CONCRETE

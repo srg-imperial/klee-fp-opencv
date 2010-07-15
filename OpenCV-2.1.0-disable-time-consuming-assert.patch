@@ -1,0 +1,22 @@
+--- OpenCV-2.1.0.orig/src/cxcore/_cxcore.h	2010-04-06 02:24:44.000000000 +0100
++++ OpenCV-2.1.0/src/cxcore/_cxcore.h	2010-07-13 20:38:11.427200230 +0100
+@@ -143,7 +143,7 @@
+ extern const char* g_HersheyGlyphs[];
+ 
+ extern const uchar g_Saturate8u[];
+-#define CV_FAST_CAST_8U(t)   (assert(-256 <= (t) && (t) <= 512), cv::g_Saturate8u[(t)+256])
++#define CV_FAST_CAST_8U(t)   (cv::g_Saturate8u[(t)+256])
+ #define CV_MIN_8U(a,b)       ((a) - CV_FAST_CAST_8U((a) - (b)))
+ #define CV_MAX_8U(a,b)       ((a) + CV_FAST_CAST_8U((b) - (a)))
+ 
+--- OpenCV-2.1.0.orig/src/cv/_cv.h	2010-04-06 02:24:42.000000000 +0100
++++ OpenCV-2.1.0/src/cv/_cv.h	2010-07-13 21:07:16.939199856 +0100
+@@ -62,7 +62,7 @@
+ 
+ /* helper tables */
+ extern const uchar icvSaturate8u_cv[];
+-#define CV_FAST_CAST_8U(t)  (assert(-256 <= (t) || (t) <= 512), icvSaturate8u_cv[(t)+256])
++#define CV_FAST_CAST_8U(t)  (icvSaturate8u_cv[(t)+256])
+ #define CV_CALC_MIN_8U(a,b) (a) -= CV_FAST_CAST_8U((a) - (b))
+ #define CV_CALC_MAX_8U(a,b) (a) += CV_FAST_CAST_8U((b) - (a))
+ 
