@@ -82,6 +82,9 @@ int main(int argc, char **argv) {
 	sse_count_v = klee_sse_count;
 #endif
 	cvUseOptimized(false);
+
+	printf("====================\n");
+
 #ifndef __CONCRETE
         klee_sse_count = 0;
 #endif
