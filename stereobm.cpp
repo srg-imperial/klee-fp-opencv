@@ -69,14 +69,14 @@ int main(int argc, char** argv) {
 		 mat3s->data.s[i], mat3v->data.s[i]);
 
 	  if (mat3s->data.s[i] != mat3v->data.s[i]) {
-	    printf("NO!!!");
-	    diffs = 1;
+	    printf("...NO");
+	    diffs++;
 	  }
 	  printf("\n");
 	}
 	printf("\n");
 	if (diffs)
-	  printf("Mismatches FOUND!\n");
+	  printf("%d mismatches FOUND!\n", diffs);
 	else printf("No mismatches found.\n");
 #else
 	for (int i = 0; i < matwidth*matheight; i++) {
