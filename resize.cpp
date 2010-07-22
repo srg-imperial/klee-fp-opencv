@@ -107,12 +107,13 @@ int main(int argc, char **argv) {
 	  printf("%d mismatches FOUND!\n", diffs); \
 	else printf("No mismatches found.\n");
 #else
+	bool same = true;
 #define PRINT_AND_CHECK(FLD, S) \
 	for (int i = 0; i < mat2width*mat2height; i++) { \
 		char buf[256]; \
 		sprintf(buf, "mat2s->data." #FLD "[%d] == mat2v->data." #FLD "[%d]", i, i); \
 		klee_print_expr(buf, mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
-		assert(mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
+		same &= (mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
 	}
 #endif
 
@@ -129,5 +130,10 @@ int main(int argc, char **argv) {
 		break;
 	default: puts("Unsupported format"); exit(1);
 	}
+
+#ifndef __CONCRETE
+	klee_print_expr("same", same);
+	assert(same);
+#endif
 }
 
