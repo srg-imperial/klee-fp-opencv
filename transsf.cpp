@@ -6,8 +6,12 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define N 4
-#define NC 3
+#ifndef TRANS_N
+#define TRANS_N 4
+#endif
+#ifndef TRANS_NC
+#define TRANS_NC 3
+#endif
 
 #include "get_seed.cpp"
 
@@ -15,11 +19,11 @@ int main(int argc, char** argv) {
 #ifndef __CONCRETE
 	unsigned sse_count_v, sse_count_s;
 #endif
-	unsigned short mat1data[N*N*NC];
-	float mat2data[NC*N];
+	unsigned short mat1data[TRANS_N*TRANS_N*TRANS_NC];
+	float mat2data[TRANS_NC*TRANS_N];
 	CvMat mat1, mat2;
-	CvMat *mat3v = cvCreateMat(N, N, CV_16UC(NC));
-	CvMat *mat3s = cvCreateMat(N, N, CV_16UC(NC));
+	CvMat *mat3v = cvCreateMat(TRANS_N, TRANS_N, CV_16UC(TRANS_NC));
+	CvMat *mat3s = cvCreateMat(TRANS_N, TRANS_N, CV_16UC(TRANS_NC));
 
 #ifdef __CONCRETE
 	// mismatch found for seed = 4
@@ -27,18 +31,18 @@ int main(int argc, char** argv) {
 	srandom(seed);
 	srand48(seed);
 
-	for (int i=0; i < N*N*NC; i++)
+	for (int i=0; i < TRANS_N*TRANS_N*TRANS_NC; i++)
 	  mat1data[i] = random();
 
-	for (int i=0; i < NC*N; i++)
+	for (int i=0; i < TRANS_NC*TRANS_N; i++)
 	  mat2data[i] = drand48();
 #else
 	klee_make_symbolic(mat1data, sizeof(mat1data), "mat1data");
 	klee_make_symbolic(mat2data, sizeof(mat2data), "mat2data");
 #endif
 
-	mat1 = cvMat(N, N, CV_16UC(NC), mat1data);
-	mat2 = cvMat(NC, N, CV_32FC1, mat2data);
+	mat1 = cvMat(TRANS_N, TRANS_N, CV_16UC(TRANS_NC), mat1data);
+	mat2 = cvMat(TRANS_NC, TRANS_N, CV_32FC1, mat2data);
 
 	cvUseOptimized(true);
 #ifndef __CONCRETE
@@ -61,7 +65,7 @@ int main(int argc, char** argv) {
 
 #ifdef __CONCRETE
 	int diffs = 0;
-	for (int i = 0; i < N*N*NC; i++) {
+	for (int i = 0; i < TRANS_N*TRANS_N*TRANS_NC; i++) {
 	  printf("%8d vs. %8d", mat3s->data.s[i], mat3v->data.s[i]);
 		 
 	  if (mat3s->data.s[i] == mat3v->data.s[i])
@@ -77,7 +81,7 @@ int main(int argc, char** argv) {
 	else printf("No mismatches found.\n");
 #else
 	//klee_dump_constraints();
-	for (int i = 0; i < N*N*NC; i++) {
+	for (int i = 0; i < TRANS_N*TRANS_N*TRANS_NC; i++) {
 	  printf("Iteration %d\n", i);
 	  if (mat3s->data.s[i] != mat3v->data.s[i]) {
 	        char buf[256];
