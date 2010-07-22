@@ -3,12 +3,14 @@ include Makefile.config
 BENCHMARKS = eigenval.exe harris.exe transff.exe transsf.exe stereobm.exe filter.exe resize.exe moments.exe morph.exe thresh.exe silhouette.exe pyramid.exe
 CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.conc morph.conc thresh.conc silhouette.conc pyramid.conc
 
+LLVMGCC_COMPILE = $(LLVMGCC_PATH)/bin/llvm-g++ $(CXXFLAGS) -I$(OPENCV_PATH)/include/opencv -I$(KLEE_PATH)/include/klee -I$(OPENCV_BUILD_PATH) -c -emit-llvm
+
 all: $(BENCHMARKS)
 
 conc: $(CONC_BENCHMARKS)
 
 %.bc: %.cpp
-	$(LLVMGCC_PATH)/bin/llvm-g++ $(CXXFLAGS) -I$(OPENCV_PATH)/include/opencv -I$(KLEE_PATH)/include/klee -I$(OPENCV_BUILD_PATH) -c -emit-llvm $< -o $@
+	$(LLVMGCC_COMPILE) $< -o $@
 
 %.o: %.cpp
 	g++ $(CXXFLAGS) -ggdb3 -D__CONCRETE -I$(OPENCV_PATH)/include/opencv -I$(OPENCV_CONC_BUILD_PATH) -c $< -o $@
