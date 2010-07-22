@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #define N 4
+#define NC 3
 
 #include "get_seed.cpp"
 
@@ -14,11 +15,11 @@ int main(int argc, char** argv) {
 #ifndef __CONCRETE
 	unsigned sse_count_v, sse_count_s;
 #endif
-	unsigned short mat1data[N*N*3];
-	float mat2data[12];
+	unsigned short mat1data[N*N*NC];
+	float mat2data[NC*N];
 	CvMat mat1, mat2;
-	CvMat *mat3v = cvCreateMat(N, N, CV_16UC3);
-	CvMat *mat3s = cvCreateMat(N, N, CV_16UC3);
+	CvMat *mat3v = cvCreateMat(N, N, CV_16UC(NC));
+	CvMat *mat3s = cvCreateMat(N, N, CV_16UC(NC));
 
 #ifdef __CONCRETE
 	// mismatch found for seed = 4
@@ -26,18 +27,18 @@ int main(int argc, char** argv) {
 	srandom(seed);
 	srand48(seed);
 
-	for (int i=0; i < N*N*3; i++)
+	for (int i=0; i < N*N*NC; i++)
 	  mat1data[i] = random();
 
-	for (int i=0; i < 12; i++)
+	for (int i=0; i < NC*N; i++)
 	  mat2data[i] = drand48();
 #else
 	klee_make_symbolic(mat1data, sizeof(mat1data), "mat1data");
 	klee_make_symbolic(mat2data, sizeof(mat2data), "mat2data");
 #endif
 
-	mat1 = cvMat(N, N, CV_16UC3, mat1data);
-	mat2 = cvMat(3, N, CV_32FC1, mat2data);
+	mat1 = cvMat(N, N, CV_16UC(NC), mat1data);
+	mat2 = cvMat(NC, N, CV_32FC1, mat2data);
 
 	cvUseOptimized(true);
 #ifndef __CONCRETE
@@ -60,7 +61,7 @@ int main(int argc, char** argv) {
 
 #ifdef __CONCRETE
 	int diffs = 0;
-	for (int i = 0; i < N*N*3; i++) {
+	for (int i = 0; i < N*N*NC; i++) {
 	  printf("%8d vs. %8d", mat3s->data.s[i], mat3v->data.s[i]);
 		 
 	  if (mat3s->data.s[i] == mat3v->data.s[i])
@@ -76,7 +77,7 @@ int main(int argc, char** argv) {
 	else printf("No mismatches found.\n");
 #else
 	//klee_dump_constraints();
-	for (int i = 0; i < N*N*3; i++) {
+	for (int i = 0; i < N*N*NC; i++) {
 	  printf("Iteration %d\n", i);
 	  if (mat3s->data.s[i] != mat3v->data.s[i]) {
 	        char buf[256];
