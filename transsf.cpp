@@ -81,18 +81,17 @@ int main(int argc, char** argv) {
 	else printf("No mismatches found.\n");
 #else
 	//klee_dump_constraints();
+	bool same = true;
 	for (int i = 0; i < TRANS_N*TRANS_N*TRANS_NC; i++) {
 	  printf("Iteration %d\n", i);
-	  if (mat3s->data.s[i] != mat3v->data.s[i]) {
-	        char buf[256];
-		sprintf(buf, "mat3s->data.s[%d]", i);
-		klee_print_expr(buf, mat3s->data.s[i]);
-		sprintf(buf, "mat3v->data.s[%d]", i);
-		klee_print_expr(buf, mat3v->data.s[i]);
-		assert(mat3s->data.s[i] == mat3v->data.s[i]);
-	  }
+	  char buf[256];
+	  sprintf(buf, "mat3s->data.s[%d]", i);
+	  klee_print_expr(buf, mat3s->data.s[i]);
+	  sprintf(buf, "mat3v->data.s[%d]", i);
+	  klee_print_expr(buf, mat3v->data.s[i]);
+	  same &= (mat3s->data.s[i] == mat3v->data.s[i]);
 	}
-	
+	assert(same);
 #endif
 }
 

@@ -44,17 +44,15 @@ int main(int argc, char** argv) {
 	assert(sse_count_v > sse_count_s);
 #endif
 
-	
+	bool same = true;
 	for (int i = 0; i < TRANS_N*TRANS_N*TRANS_NC; i++) {
 		char buf[256];
-		if (mat3s->data.fl[i] != mat3v->data.fl[i]) {
-		  sprintf(buf, "mat3s->data.fl[%d]", i);
-		  klee_print_expr(buf, mat3s->data.fl[i]);
-		  sprintf(buf, "mat3v->data.fl[%d]", i);
-		  klee_print_expr(buf, mat3v->data.fl[i]);
-		  
-		  assert(mat3s->data.fl[i] == mat3v->data.fl[i]);
-		}
+		sprintf(buf, "mat3s->data.fl[%d]", i);
+		klee_print_expr(buf, mat3s->data.fl[i]);
+		sprintf(buf, "mat3v->data.fl[%d]", i);
+		klee_print_expr(buf, mat3v->data.fl[i]);
+		same &= (mat3s->data.fl[i] == mat3v->data.fl[i]);
 	}
+	assert(same);
 }
 
