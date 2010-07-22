@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 #endif
 
 	
-	for (int i = 0; i < N*N*3; i++) {
+	for (int i = 0; i < N*N*NC; i++) {
 		char buf[256];
 		if (mat3s->data.fl[i] != mat3v->data.fl[i]) {
 		  sprintf(buf, "mat3s->data.fl[%d]", i);
