@@ -1,0 +1,58 @@
+diff -urN OpenCV-2.1.0.orig/include/opencv/cxtypes.h OpenCV-2.1.0/include/opencv/cxtypes.h
+--- OpenCV-2.1.0.orig/include/opencv/cxtypes.h	2010-04-06 02:24:40.000000000 +0100
++++ OpenCV-2.1.0/include/opencv/cxtypes.h	2010-07-27 16:59:41.855699730 +0100
+@@ -211,26 +211,7 @@
+ #define  CV_CMP(a,b)    (((a) > (b)) - ((a) < (b)))
+ #define  CV_SIGN(a)     CV_CMP((a),0)
+ 
+-CV_INLINE  int  cvRound( double value )
+-{
+-#if (defined _MSC_VER && defined _M_X64) || (defined __GNUC__ && defined __x86_64__ && !defined __APPLE__)
+-    __m128d t = _mm_set_sd( value );
+-    return _mm_cvtsd_si32(t);
+-#elif defined _MSC_VER && defined _M_IX86
+-    int t;
+-    __asm
+-    {
+-        fld value;
+-        fistp t;
+-    }
+-    return t;
+-#elif defined HAVE_LRINT || defined CV_ICC || defined __GNUC__
+-    return (int)lrint(value);
+-#else
+-    // while this is not IEEE754-compliant rounding, it's usually a good enough approximation
+-    return (int)(value + (value >= 0 ? 0.5 : -0.5));
+-#endif
+-}
++CV_EXTERN_C  int  cvRound( double value );
+ 
+ 
+ CV_INLINE  int  cvFloor( double value )
+diff -urN OpenCV-2.1.0.orig/src/cxcore/cxround.cpp OpenCV-2.1.0/src/cxcore/cxround.cpp
+--- OpenCV-2.1.0.orig/src/cxcore/cxround.cpp	1970-01-01 01:00:00.000000000 +0100
++++ OpenCV-2.1.0/src/cxcore/cxround.cpp	2010-07-27 16:59:06.067200348 +0100
+@@ -0,0 +1,23 @@
++#include "cxtypes.h"
++
++int  cvRound( double value )
++{
++#if (defined _MSC_VER && defined _M_X64) || (defined __GNUC__ && defined __x86_64__ && !defined __APPLE__)
++    __m128d t = _mm_set_sd( value );
++    return _mm_cvtsd_si32(t);
++#elif defined _MSC_VER && defined _M_IX86
++    int t;
++    __asm
++    {
++        fld value;
++        fistp t;
++    }
++    return t;
++#elif defined HAVE_LRINT || defined CV_ICC || defined __GNUC__
++    return (int)lrint(value);
++#else
++    // while this is not IEEE754-compliant rounding, it's usually a good enough approximation
++    return (int)(value + (value >= 0 ? 0.5 : -0.5));
++#endif
++}
++
