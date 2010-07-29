@@ -1,0 +1,15 @@
+--- OpenCV-2.1.0.orig/src/cxcore/cxmatmul.cpp	2010-04-06 02:24:44.000000000 +0100
++++ OpenCV-2.1.0/src/cxcore/cxmatmul.cpp	2010-07-29 18:47:47.723199283 +0100
+@@ -1409,10 +1409,10 @@
+     int dst_cn = dstmat.channels();
+     int x, y, k;
+ 
+-    if( checkHardwareSupport(CV_CPU_SSE2) && dst_cn == 3 &&
++    if( checkHardwareSupport(CV_CPU_SSE2) && dst_cn == 3 /* &&
+         std::abs(m[0]) < MAX_M && std::abs(m[1]) < MAX_M && std::abs(m[2]) < MAX_M && std::abs(m[3]) < MAX_M*256 &&
+         std::abs(m[4]) < MAX_M && std::abs(m[5]) < MAX_M && std::abs(m[6]) < MAX_M && std::abs(m[7]) < MAX_M*256 &&
+-        std::abs(m[8]) < MAX_M && std::abs(m[9]) < MAX_M && std::abs(m[10]) < MAX_M && std::abs(m[11]) < MAX_M*256 )
++        std::abs(m[8]) < MAX_M && std::abs(m[9]) < MAX_M && std::abs(m[10]) < MAX_M && std::abs(m[11]) < MAX_M*256 */ )
+     {
+         // faster fixed-point transformation
+         short m00 = saturate_cast<short>(m[0]*SCALE), m01 = saturate_cast<short>(m[1]*SCALE),
