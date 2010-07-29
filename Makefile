@@ -4,6 +4,7 @@ BENCHMARKS = eigenval.exe harris.exe transff.43.exe transsf.43.exe transff.44.ex
 CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.conc morph.conc thresh.conc silhouette.conc pyramid.conc
 
 LLVMGCC_COMPILE = $(LLVMGCC_PATH)/bin/llvm-g++ $(CXXFLAGS) -I$(OPENCV_PATH)/include/opencv -I$(KLEE_PATH)/include/klee -I$(OPENCV_BUILD_PATH) -c -emit-llvm
+GCC_COMPILE = g++ $(CXXFLAGS) -ggdb3 -D__CONCRETE -I$(OPENCV_PATH)/include/opencv -I$(OPENCV_CONC_BUILD_PATH)
 
 all: $(BENCHMARKS)
 
@@ -19,7 +20,7 @@ conc: $(CONC_BENCHMARKS)
 	$(LLVMGCC_COMPILE) -DTRANS_N=4 -DTRANS_NC=4 $< -o $@
 
 %.o: %.cpp
-	g++ $(CXXFLAGS) -ggdb3 -D__CONCRETE -I$(OPENCV_PATH)/include/opencv -I$(OPENCV_CONC_BUILD_PATH) -c $< -o $@
+	$(GCC_COMPILE) -c $< -o $@
 
 %.exe: %.bc
 	$(LLVM_BUILD_PATH)/bin/llvm-ld -disable-opt $< $(OPENCV_BUILD_PATH)/lib/libcv.a $(OPENCV_BUILD_PATH)/lib/libcxcore.a -o $@
