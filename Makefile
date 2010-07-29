@@ -1,7 +1,7 @@
 include Makefile.config
 
-BENCHMARKS = eigenval.exe harris.exe transff.43.exe transsf.43.exe transff.44.exe transsf.44.exe stereobm.exe filter.exe resize.exe moments.exe morph.exe thresh.exe silhouette.exe pyramid.exe
-CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.conc morph.conc thresh.conc silhouette.conc pyramid.conc
+BENCHMARKS = eigenval.exe harris.exe transff.43.exe transff.44.exe transsf.43.exe transsf.44.exe transcf.43.exe transcf.44.exe stereobm.exe filter.exe resize.exe moments.exe morph.exe thresh.exe silhouette.exe pyramid.exe
+CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.43.conc transsf.44.conc transcf.43.conc transcf.44.conc morph.conc thresh.conc silhouette.conc pyramid.conc
 
 LLVMGCC_COMPILE = $(LLVMGCC_PATH)/bin/llvm-g++ $(CXXFLAGS) -I$(OPENCV_PATH)/include/opencv -I$(KLEE_PATH)/include/klee -I$(OPENCV_BUILD_PATH) -c -emit-llvm
 GCC_COMPILE = g++ $(CXXFLAGS) -ggdb3 -D__CONCRETE -I$(OPENCV_PATH)/include/opencv -I$(OPENCV_CONC_BUILD_PATH)
@@ -21,6 +21,12 @@ conc: $(CONC_BENCHMARKS)
 
 %.o: %.cpp
 	$(GCC_COMPILE) -c $< -o $@
+
+%.43.o: %.cpp
+	$(GCC_COMPILE) -DTRANS_N=4 -DTRANS_NC=3 -c $< -o $@
+
+%.44.o: %.cpp
+	$(GCC_COMPILE) -DTRANS_N=4 -DTRANS_NC=4 -c $< -o $@
 
 %.exe: %.bc
 	$(LLVM_BUILD_PATH)/bin/llvm-ld -disable-opt $< $(OPENCV_BUILD_PATH)/lib/libcv.a $(OPENCV_BUILD_PATH)/lib/libcxcore.a -o $@
