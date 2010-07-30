@@ -19,29 +19,40 @@ int main(int argc, char **argv) {
 	int algo = CV_INTER_CUBIC;
 	int mat1width = 4, mat2width = 8;
 	int mat1height = 4, mat2height = 8;
-	int format = CV_8UC1;
+	int mat1format = CV_8UC1, mat2format = CV_8UC1;
 	int do_random = 0;
 	int diffs = 0;
 
 	int ch;
-	while ((ch = getopt(argc, argv, "lcLf:w:h:W:H:r:")) != -1) {
+	while ((ch = getopt(argc, argv, "lcLf:F:w:h:W:H:r:")) != -1) {
 		switch (ch) {
 		case 'l': algo = CV_INTER_LINEAR; break;
 		case 'c': algo = CV_INTER_CUBIC; break;
 		case 'L': algo = 4 /* INTER_LANCZOS4 */; break;
-		case 'f': {
 #define ID(depth, type) (((depth) << 8) | (type))
+		case 'f': {
 			int id = ID(atoi(optarg+1), *optarg);
 			switch (id) {
-				case ID(8,'u'): format = CV_8UC1; break;
-				case ID(16,'u'): format = CV_16UC1; break;
-				case ID(16,'s'): format = CV_16SC1; break;
-				case ID(32,'f'): format = CV_32FC1; break;
+				case ID(8,'u'): mat1format = CV_8UC1; break;
+				case ID(16,'u'): mat1format = CV_16UC1; break;
+				case ID(16,'s'): mat1format = CV_16SC1; break;
+				case ID(32,'f'): mat1format = CV_32FC1; break;
 				default: puts("Unsupported format"); exit(1);
 			}
 			break;
-#undef ID
 		}
+		case 'F': {
+			int id = ID(atoi(optarg+1), *optarg);
+			switch (id) {
+				case ID(8,'u'): mat2format = CV_8UC1; break;
+				case ID(16,'u'): mat2format = CV_16UC1; break;
+				case ID(16,'s'): mat2format = CV_16SC1; break;
+				case ID(32,'f'): mat2format = CV_32FC1; break;
+				default: puts("Unsupported format"); exit(1);
+			}
+			break;
+		}
+#undef ID
 		case 'w': mat1width = atoi(optarg); break;
 		case 'h': mat1height = atoi(optarg); break;
 		case 'W': mat2width = atoi(optarg); break;
@@ -52,10 +63,10 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	mat2v = cvCreateMat(mat2height, mat2width, format);
-	mat2s = cvCreateMat(mat2height, mat2width, format);
+	mat2v = cvCreateMat(mat2height, mat2width, mat2format);
+	mat2s = cvCreateMat(mat2height, mat2width, mat2format);
 
-	mat1size = mat1width * mat1height * (1 << (CV_MAT_DEPTH(format) >> 1));
+	mat1size = mat1width * mat1height * (1 << (CV_MAT_DEPTH(mat1format) >> 1));
 	mat1data = malloc(mat1size);
 #ifdef __CONCRETE
 	if (do_random) {
@@ -70,7 +81,7 @@ int main(int argc, char **argv) {
 	klee_make_symbolic(mat1data, mat1size, "mat1data");
 #endif
 
-	mat1 = cvMat(mat1height, mat1width, format, mat1data);
+	mat1 = cvMat(mat1height, mat1width, mat1format, mat1data);
 
 	cvUseOptimized(true);
 #ifndef __CONCRETE
@@ -117,7 +128,7 @@ int main(int argc, char **argv) {
 	}
 #endif
 
-	switch (format) {
+	switch (mat2format) {
 	case CV_8UC1:
 		PRINT_AND_CHECK(ptr, "%4d")
 		break;
