@@ -6,8 +6,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "get_seed.cpp"
-
 int main(int argc, char** argv) {
 #ifndef __CONCRETE
 	unsigned sse_count_v, sse_count_s;

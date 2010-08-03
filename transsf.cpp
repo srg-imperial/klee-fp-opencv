@@ -14,8 +14,6 @@
 #define TRANS_NC 3
 #endif
 
-#include "get_seed.cpp"
-
 int main(int argc, char** argv) {
 #ifndef __CONCRETE
 	unsigned sse_count_v, sse_count_s;
