@@ -1,3 +1,4 @@
+#include <klee-opencv.h>
 #include "cv.h"
 #ifndef __CONCRETE
 #include <klee.h>
@@ -116,7 +117,7 @@ int main(int argc, char **argv) {
 		char buf[256]; \
 		sprintf(buf, "mat2s->data." #FLD "[%d] == mat2v->data." #FLD "[%d]", i, i); \
 		klee_print_expr(buf, mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
-		same &= (mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
+		same &= bitwise_eq(mat2s->data.FLD[i], mat2v->data.FLD[i]); \
 	}
 #endif
 

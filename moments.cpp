@@ -1,3 +1,4 @@
+#include <klee-opencv.h>
 #include "cv.h"
 #ifndef __CONCRETE
 #include <klee.h>
@@ -94,7 +95,7 @@ int main(int argc, char **argv) {
 		char buf[256];
 		sprintf(buf, "momsp[%d] == momvp[%d]", i, i);
 		klee_print_expr(buf, momsp[i] == momvp[i]);
-		assert(momsp[i] == momvp[i]);
+		assert(bitwise_eq(momsp[i], momvp[i]));
 	}
 #endif
 }

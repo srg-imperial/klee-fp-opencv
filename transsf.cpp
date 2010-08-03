@@ -1,3 +1,4 @@
+#include <klee-opencv.h>
 #include "cv.h"
 
 #ifndef __CONCRETE
@@ -89,7 +90,7 @@ int main(int argc, char** argv) {
 	  klee_print_expr(buf, mat3s->data.s[i]);
 	  sprintf(buf, "mat3v->data.s[%d]", i);
 	  klee_print_expr(buf, mat3v->data.s[i]);
-	  same &= (mat3s->data.s[i] == mat3v->data.s[i]);
+	  same &= bitwise_eq(mat3s->data.s[i], mat3v->data.s[i]);
 	}
 	assert(same);
 #endif
