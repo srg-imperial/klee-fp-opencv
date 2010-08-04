@@ -33,17 +33,7 @@ int main(int argc, char **argv) {
 		case 'c': algo = CV_THRESH_TRUNC; break;
 		case 'z': algo = CV_THRESH_TOZERO; break;
 		case 'Z': algo = CV_THRESH_TOZERO_INV; break;
-		case 'f': {
-#define ID(depth, type) (((depth) << 8) | (type))
-			int id = ID(atoi(optarg+1), *optarg);
-			switch (id) {
-				case ID(8,'u'): format = CV_8UC1; break;
-				case ID(32,'f'): format = CV_32FC1; break;
-				default: puts("Unsupported format"); exit(1);
-			}
-			break;
-#undef ID
-		}
+		case 'f': format = format_from_str(optarg); break;
 		case 'w': matwidth = atoi(optarg); break;
 		case 'h': matheight = atoi(optarg); break;
 		case 't': thresh = atof(optarg); break;
