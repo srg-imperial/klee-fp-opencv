@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cat "$@" | grep '^SSE instr:' | grep -vw cvRound | sort | uniq | wc -l

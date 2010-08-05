@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. $(dirname "$0")/Makefile.config
+
+$KLEE_BUILD_PATH/bin/simd-count -o - $1 | wc -l
