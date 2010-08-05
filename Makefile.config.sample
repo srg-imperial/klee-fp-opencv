@@ -7,6 +7,9 @@ LLVMGCC_PATH=
 # Path to KLEE source directory 
 KLEE_PATH=
 
+# Path to build-style directories (e.g. Release or Debug) under KLEE build directory 
+KLEE_BUILD_PATH=
+
 # N.B. if you are using "make opencv", OPENCV_PATH and OPENCV_BUILD_PATH
 # indicate paths where OpenCV will be extracted and built, not paths
 # for an existing OpenCV
