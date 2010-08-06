@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 	double thresh = 2.0, maxval = 2.0;
 
 	int ch;
-	while ((ch = getopt(argc, argv, "bBczZf:w:h:t:m:r:")) != -1) {
+	while ((ch = getopt(argc, argv, "f:w:h:r:")) != -1) {
 		switch (ch) {
 		case 'f': format = format_from_str(optarg); break;
 		case 'w': matwidth = atoi(optarg); break;
