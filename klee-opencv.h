@@ -29,6 +29,21 @@ bool bitwise_eq(double a, double b) {
 	return au.i == bu.i;
 }
 
+template <typename T>
+bool unordered_eq(T a, T b) { return a == b; }
+
+template <>
+bool unordered_eq(float a, float b) {
+	/* C++ doesn't have islessgreater, C99 only.  So go behind the
+	 * header's back and use the internal builtin. */
+	return !__builtin_islessgreater(a, b);
+}
+
+template <>
+bool unordered_eq(double a, double b) {
+	return !__builtin_islessgreater(a, b);
+}
+
 inline int get_seed(int argc, char** argv) {
   if (argc != 2) {
     printf("Usage: %s <random-seed>\n", argv[0]);

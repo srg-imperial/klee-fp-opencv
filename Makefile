@@ -1,6 +1,6 @@
 include Makefile.config
 
-BENCHMARKS = eigenval.exe harris.exe transff.43.exe transff.44.exe transsf.43.exe transsf.44.exe transcf.43.exe transcf.44.exe stereobm.exe filter.exe resize.exe moments.exe morph.exe thresh.exe silhouette.exe pyramid.exe
+BENCHMARKS = eigenval.exe harris.exe transff.43.exe transff.44.exe transsf.43.exe transsf.44.exe transcf.43.exe transcf.44.exe stereobm.exe filter.exe resize.exe moments.exe morph.exe morph.uno.exe thresh.exe silhouette.exe pyramid.exe
 OPT_BENCHMARKS = $(patsubst %.exe,%.opt.bc,$(BENCHMARKS))
 CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.43.conc transsf.44.conc transcf.43.conc transcf.44.conc morph.conc thresh.conc silhouette.conc pyramid.conc
 
@@ -15,6 +15,9 @@ conc: $(CONC_BENCHMARKS)
 
 %.bc: %.cpp
 	$(LLVMGCC_COMPILE) $< -o $@
+
+%.uno.bc: %.cpp
+	$(LLVMGCC_COMPILE) -DUSE_UNORDERED_EQ $< -o $@
 
 %.43.bc: %.cpp
 	$(LLVMGCC_COMPILE) -DTRANS_N=4 -DTRANS_NC=3 $< -o $@

@@ -100,12 +100,17 @@ int main(int argc, char **argv) {
 	else printf("No mismatches found.\n");
 #else
 	bool same = true;
+#ifdef USE_UNORDERED_EQ
+#define RESULT_EQ unordered_eq
+#else
+#define RESULT_EQ bitwise_eq
+#endif
 #define PRINT_AND_CHECK(FLD, S) \
 	for (int i = 0; i < matwidth*matheight; i++) { \
 		char buf[256]; \
 		sprintf(buf, "mat2s->data." #FLD "[%d] == mat2v->data." #FLD "[%d]", i, i); \
 		klee_print_expr(buf, mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
-		same &= bitwise_eq(mat2s->data.FLD[i], mat2v->data.FLD[i]); \
+		same &= RESULT_EQ(mat2s->data.FLD[i], mat2v->data.FLD[i]); \
 	}
 #endif
 
