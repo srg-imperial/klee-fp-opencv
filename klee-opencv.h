@@ -34,14 +34,13 @@ bool unordered_eq(T a, T b) { return a == b; }
 
 template <>
 bool unordered_eq(float a, float b) {
-	/* C++ doesn't have islessgreater, C99 only.  So go behind the
-	 * header's back and use the internal builtin. */
-	return !__builtin_islessgreater(a, b);
+	/* Use | here to avoid short circuiting (forks). */
+	return !(a < b | a > b);
 }
 
 template <>
 bool unordered_eq(double a, double b) {
-	return !__builtin_islessgreater(a, b);
+	return !(a < b | a > b);
 }
 
 inline int get_seed(int argc, char** argv) {
