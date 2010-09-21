@@ -23,9 +23,10 @@ int main(int argc, char **argv) {
 	int format = CV_8UC1;
 	int do_random = 0;
 	int diffs = 0;
+	int shape = CV_SHAPE_RECT;
 
 	int ch;
-	while ((ch = getopt(argc, argv, "edf:w:h:r:")) != -1) {
+	while ((ch = getopt(argc, argv, "edf:w:h:r:x")) != -1) {
 		switch (ch) {
 		case 'e': algo = ERODE; break;
 		case 'd': algo = DILATE; break;
@@ -35,6 +36,7 @@ int main(int argc, char **argv) {
 #ifdef __CONCRETE
 		case 'r': do_random = 1; srandom(atoi(optarg)); break;
 #endif
+		case 'x': shape = CV_SHAPE_CROSS; break;
 		}
 	}
 
@@ -58,14 +60,16 @@ int main(int argc, char **argv) {
 
 	mat1 = cvMat(matheight, matwidth, format, mat1data);
 
+	IplConvKernel* k = cvCreateStructuringElementEx(3, 3, 1, 1, shape);
+
 	cvUseOptimized(true);
 #ifndef __CONCRETE
 	klee_sse_count = 0;
 #endif
 	if (algo == DILATE)
-		cvDilate(&mat1, mat2v, NULL, 1);
+		cvDilate(&mat1, mat2v, k, 1);
 	else
-		cvErode(&mat1, mat2v, NULL, 1);
+		cvErode(&mat1, mat2v, k, 1);
 #ifndef __CONCRETE
 	sse_count_v = klee_sse_count;
 #endif
@@ -74,9 +78,9 @@ int main(int argc, char **argv) {
         klee_sse_count = 0;
 #endif
 	if (algo == DILATE)
-		cvDilate(&mat1, mat2s, NULL, 1);
+		cvDilate(&mat1, mat2s, k, 1);
 	else
-		cvErode(&mat1, mat2s, NULL, 1);
+		cvErode(&mat1, mat2s, k, 1);
 #ifndef __CONCRETE
 	sse_count_s = klee_sse_count;
 	printf("SSE COUNT: V=%d S=%d\n", sse_count_v, sse_count_s);
