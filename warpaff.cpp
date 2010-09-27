@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 #ifndef __CONCRETE
 	klee_sse_count = 0;
 #endif
-	cvWarpAffine(&mat1, mat3v, &mat2, algo + CV_WARP_FILL_OUTLIERS);
+	cvWarpAffine(&mat1, mat3v, &mat2, algo);
 #ifndef __CONCRETE
 	sse_count_v = klee_sse_count;
 #endif
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 #ifndef __CONCRETE
         klee_sse_count = 0;
 #endif
-	cvWarpAffine(&mat1, mat3s, &mat2, algo + CV_WARP_FILL_OUTLIERS);
+	cvWarpAffine(&mat1, mat3s, &mat2, algo);
 #ifndef __CONCRETE
 	sse_count_s = klee_sse_count;
 	printf("SSE COUNT: V=%d S=%d\n", sse_count_v, sse_count_s);
