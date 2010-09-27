@@ -1,8 +1,8 @@
 include Makefile.config
 
-BENCHMARKS = eigenval.exe harris.exe transff.43.exe transff.44.exe transsf.43.exe transsf.44.exe transcf.43.exe transcf.44.exe stereobm.exe filter.exe resize.exe moments.exe morph.exe morph.uno.exe thresh.exe silhouette.exe pyramid.exe warpaff.exe
+BENCHMARKS = eigenval.exe harris.exe transff.43.exe transff.44.exe transsf.43.exe transsf.44.exe transcf.43.exe transcf.44.exe stereobm.exe filter.exe resize.exe moments.exe morph.exe morph.uno.exe thresh.exe silhouette.exe pyramid.exe warpaff.exe remap.exe
 OPT_BENCHMARKS = $(patsubst %.exe,%.opt.bc,$(BENCHMARKS))
-CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.43.conc transsf.44.conc transcf.43.conc transcf.44.conc morph.conc thresh.conc silhouette.conc pyramid.conc warpaff.conc
+CONC_BENCHMARKS = harris.conc stereobm.conc filter.conc resize.conc moments.conc transsf.43.conc transsf.44.conc transcf.43.conc transcf.44.conc morph.conc thresh.conc silhouette.conc pyramid.conc warpaff.conc remap.conc
 
 LLVMGCC_COMPILE = $(LLVMGCC_PATH)/bin/llvm-g++ $(CXXFLAGS) -I. -I$(OPENCV_PATH)/include/opencv -I$(KLEE_PATH)/include/klee -I$(OPENCV_BUILD_PATH) -c -emit-llvm
 GCC_COMPILE = g++ $(CXXFLAGS) -ggdb3 -D__CONCRETE -I. -I$(OPENCV_PATH)/include/opencv -I$(OPENCV_CONC_BUILD_PATH)
