@@ -30,10 +30,8 @@ int main(int argc, char **argv) {
 		case 'l': algo = CV_INTER_LINEAR; break;
 		case 'c': algo = CV_INTER_CUBIC; break;
 		case 'L': algo = 4 /* INTER_LANCZOS4 */; break;
-#define ID(depth, type) (((depth) << 8) | (type))
 		case 'f': mat1format = format_from_str(optarg); break;
 		case 'F': mat2format = format_from_str(optarg); break;
-#undef ID
 		case 'w': mat1width = atoi(optarg); break;
 		case 'h': mat1height = atoi(optarg); break;
 		case 'W': mat2width = atoi(optarg); break;

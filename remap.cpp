@@ -8,42 +8,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static float *coord_map_data(int matheight, int matwidth, int max) {
+	float *data = (float *) malloc(matheight * matwidth * sizeof(float));
+	for (int i = 0; i < matheight * matwidth; ++i) {
+		data[i] = (i * 3) % max;
+	}
+	return data;
+}
+
 int main(int argc, char **argv) {
 #ifndef __CONCRETE
 	unsigned sse_count_v, sse_count_s;
 #endif
 	void *mat1data;
 	size_t matsize;
-	CvMat mat1;
+	CvMat mat1, mapx, mapy;
 	CvMat *mat2v, *mat2s;
 
-	enum { ERODE, DILATE } algo = ERODE;
+	int algo = CV_INTER_CUBIC;
 	int matwidth = 4;
 	int matheight = 4;
-	int format = CV_8UC1;
+	int matformat = CV_8UC1;
 	int do_random = 0;
 	int diffs = 0;
-	int shape = CV_SHAPE_RECT;
 
 	int ch;
-	while ((ch = getopt(argc, argv, "edf:w:h:r:x")) != -1) {
+	while ((ch = getopt(argc, argv, "nlcLf:F:w:h:W:H:r:")) != -1) {
 		switch (ch) {
-		case 'e': algo = ERODE; break;
-		case 'd': algo = DILATE; break;
-		case 'f': format = format_from_str(optarg); break;
+		case 'n': algo = CV_INTER_NN; break;
+		case 'l': algo = CV_INTER_LINEAR; break;
+		case 'c': algo = CV_INTER_CUBIC; break;
+		case 'L': algo = 4 /* INTER_LANCZOS4 */; break;
+		case 'f': matformat = format_from_str(optarg); break;
 		case 'w': matwidth = atoi(optarg); break;
 		case 'h': matheight = atoi(optarg); break;
 #ifdef __CONCRETE
 		case 'r': do_random = 1; srandom(atoi(optarg)); break;
 #endif
-		case 'x': shape = CV_SHAPE_CROSS; break;
 		}
 	}
 
-	mat2v = cvCreateMat(matheight, matwidth, format);
-	mat2s = cvCreateMat(matheight, matwidth, format);
+	mat2v = cvCreateMat(matheight, matwidth, matformat);
+	mat2s = cvCreateMat(matheight, matwidth, matformat);
 
-	matsize = matwidth * matheight * (1 << (CV_MAT_DEPTH(format) >> 1));
+	matsize = matwidth * matheight * (1 << (CV_MAT_DEPTH(matformat) >> 1));
 	mat1data = malloc(matsize);
 #ifdef __CONCRETE
 	if (do_random) {
@@ -52,24 +60,25 @@ int main(int argc, char **argv) {
 		while (left--)
 			*(mat1cdata++) = random();
 	} else {
-		memcpy(mat1data, "\x7f\x7f\xba\x00\xb8\x9b/\x00\xde\xa4\x11\x00UH\xfe\x00", matsize); /* TODO: real data */
+		memcpy(mat1data, "\x7f\x7f\xba\x00\xb8\x9b/\x00\xde\xa4\x11\x00UH\xfe\x00", matsize);
 	}
 #else
 	klee_make_symbolic(mat1data, matsize, "mat1data");
 #endif
 
-	mat1 = cvMat(matheight, matwidth, format, mat1data);
+	mat1 = cvMat(matheight, matwidth, matformat, mat1data);
 
-	IplConvKernel* k = cvCreateStructuringElementEx(3, 3, 1, 1, shape);
+	float *mapxdata = coord_map_data(matheight, matwidth, matwidth);
+	mapx = cvMat(matheight, matwidth, CV_32FC1, mapxdata);
+	
+	float *mapydata = coord_map_data(matheight, matwidth, matheight);
+	mapy = cvMat(matheight, matwidth, CV_32FC1, mapydata);
 
 	cvUseOptimized(true);
 #ifndef __CONCRETE
 	klee_sse_count = 0;
 #endif
-	if (algo == DILATE)
-		cvDilate(&mat1, mat2v, k, 1);
-	else
-		cvErode(&mat1, mat2v, k, 1);
+	cvRemap(&mat1, mat2v, &mapx, &mapy, algo);
 #ifndef __CONCRETE
 	sse_count_v = klee_sse_count;
 #endif
@@ -77,14 +86,11 @@ int main(int argc, char **argv) {
 #ifndef __CONCRETE
         klee_sse_count = 0;
 #endif
-	if (algo == DILATE)
-		cvDilate(&mat1, mat2s, k, 1);
-	else
-		cvErode(&mat1, mat2s, k, 1);
+	cvRemap(&mat1, mat2s, &mapx, &mapy, algo);
 #ifndef __CONCRETE
 	sse_count_s = klee_sse_count;
 	printf("SSE COUNT: V=%d S=%d\n", sse_count_v, sse_count_s);
-	assert(sse_count_v > sse_count_s);
+	// assert(sse_count_v > sse_count_s);
 #endif
 
 #ifdef __CONCRETE
@@ -104,21 +110,16 @@ int main(int argc, char **argv) {
 	else printf("No mismatches found.\n");
 #else
 	bool same = true;
-#ifdef USE_UNORDERED_EQ
-#define RESULT_EQ unordered_eq
-#else
-#define RESULT_EQ bitwise_eq
-#endif
 #define PRINT_AND_CHECK(FLD, S) \
 	for (int i = 0; i < matwidth*matheight; i++) { \
 		char buf[256]; \
 		sprintf(buf, "mat2s->data." #FLD "[%d] == mat2v->data." #FLD "[%d]", i, i); \
 		klee_print_expr(buf, mat2s->data.FLD[i] == mat2v->data.FLD[i]); \
-		same &= RESULT_EQ(mat2s->data.FLD[i], mat2v->data.FLD[i]); \
+		same &= bitwise_eq(mat2s->data.FLD[i], mat2v->data.FLD[i]); \
 	}
 #endif
 
-	switch (format) {
+	switch (matformat) {
 	case CV_8UC1:
 		PRINT_AND_CHECK(ptr, "%4d")
 		break;
