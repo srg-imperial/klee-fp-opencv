@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 	mat2v = cvCreateMat(matheight, matwidth, matformat);
 	mat2s = cvCreateMat(matheight, matwidth, matformat);
 
-	matsize = matwidth * matheight * (1 << (CV_MAT_DEPTH(matformat) >> 1));
+	matsize = matwidth * matheight * (1 << (CV_MAT_DEPTH(matformat) >> 1)) * CV_MAT_CN(matformat);
 	mat1data = malloc(matsize);
 #ifdef __CONCRETE
 	if (do_random) {
