@@ -54,12 +54,14 @@ inline int get_seed(int argc, char** argv) {
 
 inline int format_from_str(char *fmt) {
 #define ID(depth, type) (((depth) << 8) | (type))
-	int id = ID(atoi(fmt+1), *fmt);
+	char *end;
+	int id = ID(strtol(fmt+1, &end, 10), *fmt);
+	int ch = (*end == 'c') ? atoi(end+1) : 1;
 	switch (id) {
-		case ID(8,'u'): return CV_8UC1;
-		case ID(16,'u'): return CV_16UC1;
-		case ID(16,'s'): return CV_16SC1;
-		case ID(32,'f'): return CV_32FC1;
+		case ID(8,'u'): return CV_8UC(ch);
+		case ID(16,'u'): return CV_16UC(ch);
+		case ID(16,'s'): return CV_16SC(ch);
+		case ID(32,'f'): return CV_32FC(ch);
 		default: puts("Unsupported format"); exit(1);
 	}
 #undef ID
