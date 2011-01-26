@@ -58,7 +58,7 @@ opencv: OpenCV-2.1.0.tar.bz2
 	    patch -p1 < $$patch ; \
 	  done
 	mkdir -p $(OPENCV_BUILD_PATH)
-	cd $(OPENCV_BUILD_PATH) && $(shell pwd)/cmake-opencv $(OPENCV_PATH)
+	cd $(OPENCV_BUILD_PATH) && $(shell pwd)/cmake-opencv-rel $(OPENCV_PATH)
 	-make -C$(OPENCV_BUILD_PATH)
 
 clean:
