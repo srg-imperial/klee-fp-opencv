@@ -1,14 +1,3 @@
 #!/bin/sh
 
-. ./Makefile.config
-
-NAME=$1
-shift
-
-OUTDIR=pyramid.auto.out.$NAME
-rm -rf $OUTDIR
-mkdir $OUTDIR
-
-id=u8
-echo $id
-$KLEE_BUILD_PATH/bin/klee -libc=uclibc -output-source=false -output-istats=false -output-dir=$OUTDIR/klee-out-$id -instrument-simd ./pyramid.opt.bc -f u8 "$@" > $OUTDIR/$id.log 2>&1
+echo u8 pyramid.opt.bc -f u8 -w 8 -h 2 "$@"

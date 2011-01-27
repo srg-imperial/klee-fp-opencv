@@ -1,16 +1,6 @@
 #!/bin/sh
 
-. ./Makefile.config
-
-NAME=$1
-shift
-
-OUTDIR=trans.auto.out.$NAME
-rm -rf $OUTDIR
-mkdir $OUTDIR
-
 for fmt in ff.43 ff.44 sf.43 cf.43 ; do
 	id=$fmt
-	echo $id
-	$KLEE_BUILD_PATH/bin/klee -libc=uclibc -output-source=false -output-istats=false -output-dir=$OUTDIR/klee-out-$id -instrument-simd ./trans$fmt.opt.bc -f $fmt "$@" > $OUTDIR/$id.log 2>&1
+	echo $id trans$fmt.opt.bc -f $fmt "$@"
 done

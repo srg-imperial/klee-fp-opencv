@@ -1,18 +1,10 @@
 #!/bin/sh
 
-. ./Makefile.config
-
-NAME=$1
-shift
-
-OUTDIR=thresh.auto.out.$NAME
-rm -rf $OUTDIR
-mkdir $OUTDIR
+# MAX-DIM=16
 
 for algo in b B c z Z ; do
 	for fmt in u8 f32 ; do
 		id=$algo$fmt
-		echo $id
-		$KLEE_BUILD_PATH/bin/klee -libc=uclibc -output-source=false -output-istats=false -output-dir=$OUTDIR/klee-out-$id -instrument-simd ./thresh.opt.bc -$algo -f $fmt "$@" > $OUTDIR/$id.log 2>&1
+		echo $id thresh.opt.bc -$algo -f $fmt "$@"
 	done
 done
