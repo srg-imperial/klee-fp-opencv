@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#PBS -l walltime=1:00:00
+#PBS -l mem=1000mb
+#PBS -k n
+
+exec $1/$PBS_ARRAY_INDEX
